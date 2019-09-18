@@ -1,0 +1,35 @@
+## example of Cluester role bindings
+ClusterRoleBinding:
+  - name: group-clusterrolebinding-cluster-admin ## all names can be changed
+    groups:
+      - admins
+    ClusterRoleName: cluster-admin ## default Kubernetes cluster admin role
+  - name: group-clusterrolebinding-edit
+    groups:
+      - editors
+    ClusterRoleName: edit ## default cluster role with edit permission across whole cluster
+  - name: group-clusterrolebinding-view
+    kubeGroups:
+      - system:authenticated ## default system groups that contains all authenticated users
+    ClusterRoleName: view ## default cluster role with view permission across whole cluster
+
+## example of role binding to give edit access to default namespace
+RoleBinding:
+  - name: group-rolebinding-default-edit
+    namespace: default
+    groups:
+      - engineers
+    ClusterRoleName: edit
+
+## Section to define groups
+Groups:
+  admins:
+    - name1@example.com
+    - name2@example.com
+  editors: []
+  engineers: []
+
+##
+# To add aggregationRule Role or CluserRole:
+# follow helm teplate in templates
+##
