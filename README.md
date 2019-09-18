@@ -15,9 +15,11 @@ Please refer to comments in "values.yaml"
 ## Google Cloud setup
 The only permissions in IAM needed to get authenticated in Kubernetes for users:
 
-```container.apiServices.get
+```
+container.apiServices.get
 container.apiServices.list
 container.clusters.get
-container.clusters.getCredentials```
+container.clusters.getCredentials
+```
 
 This will get users to 'system:authenticated' group, which can be given (view) role, so no need to specify (view) users
