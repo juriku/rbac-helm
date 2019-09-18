@@ -1,26 +1,3 @@
-## example of Cluester role bindings
-ClusterRoleBinding:
-  - name: group-clusterrolebinding-cluster-admin ## all names can be changed
-    groups:
-      - admins
-    ClusterRoleName: cluster-admin ## default Kubernetes cluster admin role
-  - name: group-clusterrolebinding-edit
-    groups:
-      - editors
-    ClusterRoleName: edit ## default cluster role with edit permission across whole cluster
-  - name: group-clusterrolebinding-view
-    kubeGroups:
-      - system:authenticated ## default system groups that contains all authenticated users
-    ClusterRoleName: view ## default cluster role with view permission across whole cluster
-
-## example of role binding to give edit access to default namespace
-RoleBinding:
-  - name: group-rolebinding-default-edit
-    namespace: default
-    groups:
-      - engineers
-    ClusterRoleName: edit
-
 ## Section to define groups
 Groups:
   admins:
@@ -29,7 +6,110 @@ Groups:
   editors: []
   engineers: []
 
-##
-# To add aggregationRule Role or CluserRole:
-# follow helm teplate in templates
-##
+## add groups of service accounts if needed
+serviceAccountGroups:
+  ci:
+    - ci@deploy.com
+
+## example of Cluester role bindings
+ClusterRoleBinding:
+  - name: group-clusterrolebinding-cluster-admin ## all names can be changed
+    groups:
+      - admins ## refers to a group under Groups
+    ClusterRoleName: cluster-admin ## default Kubernetes cluster admin role
+  - name: group-clusterrolebinding-edit
+    groups:
+      - editors
+    ClusterRoleName: edit ## default cluster role with edit permission across whole cluster
+  - name: group-clusterrolebinding-view
+    kubeGroups: ## add groups for kind: Group
+      - system:authenticated ## default system groups that contains all authenticated users
+    ClusterRoleName: view ## default cluster role with view permission across whole cluster
+
+## example of role binding to give edit access to default namespace
+RoleBinding:
+  - name: group-rolebinding-default-edit
+    namespace: default
+    labels:
+      boo: foo ## can define extra labels
+    groups:
+      - engineers
+    ClusterRoleName: edit ## define ClusterRole or use RoleName: to define Role
+  - name: group-rolebinding-maxiaggrigation
+    namespace: default
+    kubeGroups:
+      - system:authenticated
+    ClusterRoleName: maxiaggrigation ## from aggregationRule example
+
+## example of creating a Roles
+Role:
+  - name: minirole
+    namespace: default
+    labels:
+      type: mini
+    rules: ## example of rules
+      - apiGroups:
+          - ""
+        resources:
+          - configmaps
+          - endpoints
+          - persistentvolumeclaims
+          - persistentvolumeclaims/status
+          - pods
+          - replicationcontrollers
+          - replicationcontrollers/scale
+          - serviceaccounts
+          - services
+          - services/status
+        verbs:
+          - get
+          - list
+          - watch
+
+## example of creating a ClusterRoles
+ClusterRole:
+  - name: maxirole
+    labels:
+      type: maxi ## labels can be used fo aggrigations
+    rules: ## example of rules
+      - apiGroups:
+          - ""
+        resources:
+          - pods/attach
+          - pods/exec
+          - pods/portforward
+          - pods/proxy
+          - secrets
+          - services/proxy
+        verbs:
+          - get
+          - list
+          - watch
+  - name: maxirolemore
+    labels:
+      type: maxi ## labels can be used fo aggrigations
+    rules: ## example of rules
+      - apiGroups:
+          - ""
+        resources:
+          - persistentvolumes
+        verbs:
+          - get
+          - list
+          - patch
+          - update
+          - watch
+      - apiGroups:
+          - ""
+        resources:
+          - nodes
+        verbs:
+          - get
+          - list
+          - watch
+
+## example of aggregationRule - for aggrigating ClusterRoles
+aggregationRule:
+  - name: maxiaggrigation
+    matchLabels:
+      type: maxi ## to match all ClusterRoles with this label

@@ -2,14 +2,14 @@
 Simplified Kubernetes RBAC deployment with helm for user/groups
 
 ## Advantages
-- easy way to add users to one group and not repeat them in values
-- can supply several groups to one rolebinding
+- an easy way to add users to one group and not repeat them in values
+- can supply several groups to one role binding
 - will not create individual role bindings per user, but group them instead
-- use of default Kubernetes aggrigated rules for admin/edit/view
+- use of default Kubernetes aggregated rules for admin/edit/view
 - no need to specify users for only view - all authenticated users will have view access by default
 - easy to add new custom (cluster)roles and role bindings
 
-## example
+## Examples
 Please refer to comments in "values.yaml"
 
 ## Google Cloud setup
